@@ -118,14 +118,22 @@ var getProjectName = function () {
  */
 var generateIcon = function (platform, icon) {
     var deferred = Q.defer();
-    ig.resize({
+    var igOpts = {
         srcPath: settings.ICON_FILE,
         dstPath: platform.iconsPath + icon.name,
         quality: 1,
         format: 'png',
         width: icon.size,
         height: icon.size,
-    } , function(err, stdout, stderr){
+        customArgs: [],
+    };
+    if (platform.name == 'ios') {
+        igOpts.customArgs = [
+            '-background', 'white',
+            '-alpha', 'remove',
+        ];
+    }
+    ig.resize(igOpts, function(err, stdout, stderr) {
         if (err) {
             deferred.reject(err);
         } else {
